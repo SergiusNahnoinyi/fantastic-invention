@@ -1,11 +1,19 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import { Inter } from "@next/font/google";
+import { GetStaticProps } from "next";
 
-const inter = Inter({ subsets: ['latin'] })
+import ContentfulService from "../services/contentful-service";
+import { IAuthorFields } from "../types/contentful";
 
-export default function Home() {
+const inter = Inter({ subsets: ["latin"] });
+import styles from "../styles/Home.module.css";
+
+interface Props {
+  author: IAuthorFields[];
+}
+
+export default function Home({ author }: Props) {
   return (
     <>
       <Head>
@@ -26,7 +34,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              By{' '}
+              By{" "}
               <Image
                 src="/vercel.svg"
                 alt="Vercel Logo"
@@ -117,7 +125,20 @@ export default function Home() {
             </p>
           </a>
         </div>
+        <p className={inter.className}>{author[0].author}</p>
       </main>
     </>
-  )
+  );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  const author = (
+    await ContentfulService.instance.getEntriesByType<IAuthorFields>("author")
+  ).map((entry) => entry.fields);
+
+  return {
+    props: {
+      author,
+    },
+  };
+};
