@@ -14,7 +14,6 @@ interface Props {
 }
 
 export default function Home({ author }: Props) {
-  console.log(author);
   return (
     <>
       <Head>
